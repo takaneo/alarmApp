@@ -18,7 +18,11 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         // RecieverからMainActivityを起動させる処理ここから
-        Intent intent2 = new Intent(context, MainActivity.class);
+//        Intent intent2 = new Intent(context, MainActivity.class);
+
+        Intent intent2 = new Intent(context, SubActivity.class);
+
+
         // PendingIntentを使用 getActivityの第二引数について http://9ensan.com/blog/smartphone/android/android-pendingintent-putextra/
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent2, 0);
         //----------------ここまでがIntentの生成。実際にセットはされてないので発動はしない-----------------------

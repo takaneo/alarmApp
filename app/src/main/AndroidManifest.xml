@@ -26,8 +26,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SubActivity"></activity>
 
-        <receiver android:name=".AlarmBroadcastReceiver" android:process=":remote" />
+        <receiver android:name=".AlarmBroadcastReceiver" android:process=":remote" ></receiver>
 
 
     </application>
