@@ -30,3 +30,6 @@ proguard/
 
 # Android Studio captures folder
 captures/
+
+# 追記（ビルド時に都度作成されるので管理対象から外す）
+.idea/
