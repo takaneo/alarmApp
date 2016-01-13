@@ -3,8 +3,11 @@ package com.example.takahiro.alarmapp;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -21,10 +25,8 @@ import java.util.HashMap;
  */
 public class SubActivity extends AppCompatActivity {
 
+    static SQLiteDatabase mydb;
     ArrayList<Integer> recArray = new ArrayList<>();
-
-    // http://techbooster.org/android/ui/11506/
-//    TimePickerDialog dialog;
     TimePicker picker;
 
     // 画面が生成されるときの処理
@@ -54,51 +56,60 @@ public class SubActivity extends AppCompatActivity {
             recArray = intent.getIntegerArrayListExtra("reserveData");
         }
 
-
         // 予約ボタン押下時
         Button btn = (Button)this.findViewById(R.id.reserve);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.setClassName("com.example.takahiro.alarmapp", "com.example.takahiro.alarmapp.SubActivity");
-
-
-
                 Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
                 PendingIntent pending = PendingIntent.getBroadcast
                         (getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT); //http://www.atmarkit.co.jp/ait/articles/1202/16/news130_2.html
-                //http://d.hatena.ne.jp/rso/20110302
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.YEAR, recArray.get(0));
                 calendar.set(Calendar.MONTH, recArray.get(1));
                 calendar.set(Calendar.DATE, recArray.get(2));
+
                 // 指定された時間を直接設定
-
-                int tmp1 = picker.getCurrentHour();
-                int tmp2 = picker.getCurrentMinute();
-
-
-
-
                 calendar.set(Calendar.HOUR_OF_DAY, picker.getCurrentHour());
                 calendar.set(Calendar.MINUTE, picker.getCurrentMinute());
                 calendar.set(Calendar.SECOND, 0);
                 calendar.set(Calendar.MILLISECOND, 0);
+
+                // DBに予約情報を登録
+                MySQLiteOpenHelper hlpr = new MySQLiteOpenHelper(getApplicationContext());
+                mydb = hlpr.getWritableDatabase();
+                SimpleDateFormat sdfForExecute  = new SimpleDateFormat();
+                SimpleDateFormat sdfForRegister = new SimpleDateFormat();
+                ContentValues values = new ContentValues();
+                //http://java-reference.sakuraweb.com/java_date_format.html
+                values.put("RegisterDate", sdfForRegister.format(calendar.getTime()));
+                values.put("ExecuteDate" , sdfForExecute.format(calendar.getTime()));
+                mydb.insert("alarmTalbe", null, values);
+
+                /* 検索の処理(queryを使用) */
+                // query(table名,field名(String[]),検索語,検索語に?がある場合に使用,GROUP BY，HAVING，ORDERBY)
+                Cursor mCursor = mydb.query("alarmTalbe",
+                        new String[] { "RegisterId", "RegisterDate", "ExecuteDate"},
+                        null, null, null, null, null);
+
+                // Cursorを先頭に移動する 検索結果が0件の場合にfalse
+                if (mCursor.moveToFirst()) {
+                    String dispId = mCursor.getString(mCursor
+                            .getColumnIndex("RegisterId"));
+
+                    int tmp = 0;
+                    int tmp1 = 1;
+                }
 
                 // アラームをセット
                 Context context = SubActivity.this;
                 AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
 
-//                AlarmManager am = (AlarmManager) SubActivity.this.getSystemService(ALARM_SERVICE);
-//                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
-
                 Toast.makeText(
                         com.example.takahiro.alarmapp.SubActivity.this,
                         recArray.get(0).toString() + "年:" +
-//                                recArray.get(1).toString() + "月:" +
                                 String.valueOf(recArray.get(1) +1) + "月:" +
                                 recArray.get(2).toString() + "日:" +
                                 picker.getCurrentHour().toString() + "時:" +
