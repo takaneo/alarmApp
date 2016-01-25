@@ -29,8 +29,5 @@
         <activity android:name=".SubActivity"></activity>
 
         <receiver android:name=".AlarmBroadcastReceiver" android:process=":remote" ></receiver>
-
-        <activity android:name=".StethoTest"></activity>
-
     </application>
 </manifest>

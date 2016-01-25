@@ -97,7 +97,12 @@ public class SubActivity extends AppCompatActivity {
                 if (mCursor.moveToFirst()) {
                     String dispId = mCursor.getString(mCursor
                             .getColumnIndex("RegisterId"));
+                }
 
+                // テストコード。DBに格納されてるデータ件数を確認
+                Cursor smpCursor = mydb.rawQuery("SELECT count(*) as cnt FROM alarmTalbe", new String[]{});
+                if (smpCursor.moveToFirst()) {
+                    int tmpCnt = smpCursor.getInt(smpCursor.getColumnIndex("cnt"));
                     int tmp = 0;
                     int tmp1 = 1;
                 }
