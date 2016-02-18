@@ -29,5 +29,9 @@
         <activity android:name=".SubActivity"></activity>
 
         <receiver android:name=".AlarmBroadcastReceiver" android:process=":remote" ></receiver>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="880410b5bab4d65aca259320372864b3be8a4daf" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
