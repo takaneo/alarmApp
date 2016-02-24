@@ -61,8 +61,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
+        // 履歴ボタン
+        Button btnHist = (Button)this.findViewById(R.id.btnHist);
+        btnHist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClassName("com.example.takahiro.alarmapp", "com.example.takahiro.alarmapp.HistActivity");
+                startActivity(intent);
+            }
+        });
 
 /*        // 日時を指定したアラーム
         Button btn3 = (Button)this.findViewById(R.id.button3);

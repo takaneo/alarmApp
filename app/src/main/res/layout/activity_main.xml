@@ -11,8 +11,11 @@
         android:layout_height="wrap_content"
         android:text="次へ"
         android:id="@+id/btn1"
-        android:layout_below="@+id/dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="33dp"
+        android:layout_marginStart="33dp" />
 
     <DatePicker
         android:layout_width="wrap_content"
@@ -22,5 +25,14 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="履歴"
+        android:id="@+id/btnHist"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/dp"
+        android:layout_alignEnd="@+id/dp" />
 
 </RelativeLayout>
