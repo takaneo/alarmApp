@@ -19,11 +19,9 @@ import java.util.ArrayList;
 
 public class HistActivity extends AppCompatActivity {
     static SQLiteDatabase mydb;
-    ArrayList<String> rDates = new ArrayList();  // インスタンス生成必須
+    ArrayList<RegisterBean> registerList = new ArrayList();  // インスタンス生成必須
     ArrayAdapter<String> adapter;
     ListView lview;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,29 +34,46 @@ public class HistActivity extends AppCompatActivity {
         // Intent intent = getIntent(); 遷移元からデータ引き継いでないので記述不要
         MySQLiteOpenHelper hlpr = new MySQLiteOpenHelper(getApplicationContext());
         mydb = hlpr.getReadableDatabase();
-        Cursor mCursor = mydb.rawQuery("select RegisterDate, RegisterId from alarmTalbe order by RegisterId desc", null);
+        Cursor mCursor = mydb.rawQuery("select RegisterId, RegisterDate, ExecuteDate from alarmTalbe order by RegisterId desc", null);
 
         // 予約情報が1件もない場合_よい実装を考える。
         if (mCursor == null){
             return;
         }
+        // DBから取得したデータをListに詰める
         while (mCursor.moveToNext()) {
-            String date = mCursor.getString(mCursor.getColumnIndex("RegisterDate"));
-            rDates.add(date);
+            RegisterBean bean = new RegisterBean();
+            bean.setRegisterId(mCursor.getInt(mCursor.getColumnIndex("RegisterId")));
+            bean.setRegisterDate(mCursor.getString(mCursor.getColumnIndex("RegisterDate")));
+            bean.setExecuteDate(mCursor.getString(mCursor.getColumnIndex("ExecuteDate")));
+            bean.setRegisterInfo("予約No" + mCursor.getInt(mCursor.getColumnIndex("RegisterId")) + "："+ mCursor.getString(mCursor.getColumnIndex("ExecuteDate")));
+            registerList.add(bean);
         }
+
+        // ListView用に実行日だけ詰め替える
+        final ArrayList<String> showList = new ArrayList<>();
+        for (RegisterBean bean : registerList){
+            showList.add(bean.getRegisterInfo());
+        }
+
         lview = (ListView) findViewById(R.id.lv);
         adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_expandable_list_item_1, rDates);
+                android.R.layout.simple_expandable_list_item_1, showList);
         lview.setAdapter(adapter);
 
         // リスト項目をクリック
         lview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            String item;  // onItemClickの中で宣言すると、ダイアログ生成のonClickで変数が使用できない
+            String deleteId; // onItemClickの中で宣言すると、ダイアログ生成のonClickで変数が使用できない
+            int position = -1;
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 ListView lv = (ListView) parent;
-                item = (String) lv.getItemAtPosition(pos);   //選択された予約情報
+
+                deleteId = (String) lv.getItemAtPosition(pos);   //選択項目
+                int index = deleteId.indexOf("：");
+                deleteId = deleteId.substring(4, index);
+                position = pos;
 
                 // 確認ダイアログ生成
                 AlertDialog.Builder alertDlg = new AlertDialog.Builder(HistActivity.this);  // ここはgetApplicationContext()では動かない
@@ -67,16 +82,21 @@ public class HistActivity extends AppCompatActivity {
                 alertDlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        adapter.remove(item);
+                        mydb.rawQuery("Delete From alarmTalbe Where RegisterId = ?", new String[]{deleteId}).moveToFirst() ;
+                        showList.remove(position);
+                        adapter.notifyDataSetChanged();
 
-                                // OK ボタンクリック処理
+                        // OK ボタンクリック処理
                         Toast.makeText(getApplicationContext(), "削除しました", Toast.LENGTH_LONG).show();
+
+                        // ListViewからデータ削除
+                        // adapter.remove(item);
                     }
                 });
                 alertDlg.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                                // Cancel ボタンクリック処理
-                                Toast.makeText(getApplicationContext(), "Cancel押されました", Toast.LENGTH_LONG).show();
+                        // Cancel ボタンクリック処理
+                        Toast.makeText(getApplicationContext(), "Cancel押されました", Toast.LENGTH_LONG).show();
                     }
                 });
                 // 表示
@@ -99,8 +119,10 @@ public class HistActivity extends AppCompatActivity {
 }
 
 
-
-
+// debug用
+/*          int eId = mCursor.getInt(mCursor.getColumnIndex("RegisterId"));
+            String rDate = mCursor.getString(mCursor.getColumnIndex("RegisterDate"));
+            String eDate = mCursor.getString(mCursor.getColumnIndex("ExecuteDate"));*/
 
 /*        try {
             while (mCursor.moveToNext()) {
