@@ -1,15 +1,22 @@
 package com.example.takahiro.alarmapp;
 
+import android.test.suitebuilder.annotation.LargeTest;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
-/**
- * To work on unit tests, switch the Test Artifact in the Build Variants view.
- */
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class ExampleUnitTest {
+
+    @Rule
+    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule(MainActivity.class);
+
     @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+    public void listGoesOverTheFold() {
+        onView(withText("Hello world!")).check(matches(isDisplayed()));
     }
 }
