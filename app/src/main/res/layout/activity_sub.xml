@@ -14,4 +14,11 @@
         android:text="予約"
         android:id="@+id/reserve"
         android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="88dp"
+        android:layout_height="wrap_content"
+        android:text="戻る"
+        android:id="@+id/back_btn"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>

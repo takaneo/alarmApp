@@ -109,9 +109,7 @@ public class HistActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClassName("com.example.takahiro.alarmapp", "com.example.takahiro.alarmapp.MainActivity");
-                startActivity(intent);
+                finish();
             }
         });
 

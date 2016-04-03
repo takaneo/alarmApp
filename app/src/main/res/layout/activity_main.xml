@@ -17,15 +17,6 @@
         android:layout_marginLeft="33dp"
         android:layout_marginStart="33dp" />
 
-    <DatePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/dp"
-        android:calendarViewShown="false"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,5 +25,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/dp"
         android:layout_alignEnd="@+id/dp" />
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dp"
+        android:calendarViewShown="false"
+        android:layout_alignLeft="@+id/btn1"
+        android:layout_alignStart="@+id/btn1" />
 
 </RelativeLayout>

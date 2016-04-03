@@ -123,5 +123,20 @@ public class SubActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
             }
         });
+
+        // 戻るボタン押下時
+        Button back_btn = (Button)this.findViewById(R.id.back_btn);
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // intentで戻るのではなく、このSubActivity自体を終了させることによって戻る
+                // http://ichitcltk.hustle.ne.jp/gudon2/index.php?pageType=file&id=Android023_ActivityChange
+                finish();
+/*                Intent intent = new Intent();
+                intent.setClassName("com.example.takahiro.alarmapp", "com.example.takahiro.alarmapp.MainActivity");
+                startActivity(intent);*/
+            }
+        });
+
     }
 }
