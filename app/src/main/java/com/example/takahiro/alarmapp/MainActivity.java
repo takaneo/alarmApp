@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // データチェック(引数:選択された年月日)
                 // this.dateCheckだとメソッド呼び出せない
-                boolean rtnFlag = dateCheck(year, month, day,
+                boolean rtnFlag =  DateUtil.dateCheck(year, month, day,
                         datepicker.getYear(), datepicker.getMonth(), datepicker.getDayOfMonth());
 
                 if (rtnFlag) {
@@ -125,27 +125,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    // 選択された年月日が現在日付より後か？
-    // OK → true   NG → False
-    // http://www.repica.jp/staffblog/tech/2012/08/17/633/
-    public boolean dateCheck(int nowYear, int nowMonth, int nowDay,
-                             int targetYear, int targetMonth, int targetDay) {
-        boolean rtnFlag = false;
-        Calendar nowDate = Calendar.getInstance();
-        nowDate.set(nowYear, nowMonth, nowDay, 0, 00, 00);
-        nowDate.set(Calendar.MILLISECOND, 0);
-
-        Calendar targetDate = Calendar.getInstance();
-        targetDate.set(targetYear, targetMonth, targetDay, 0, 00, 00);
-        targetDate.set(Calendar.MILLISECOND,0);
-
-        int diff = targetDate.compareTo(nowDate);
-        if (diff == 0 || diff > 0) {
-            rtnFlag = true;
-        }
-        return rtnFlag;
-    }
-
 }
