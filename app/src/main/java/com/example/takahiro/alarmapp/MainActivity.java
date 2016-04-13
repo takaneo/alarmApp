@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // データチェック(引数:選択された年月日)
                 // this.dateCheckだとメソッド呼び出せない
-                boolean rtnFlag =  DateUtil.dateCheck(year, month, day,
+                boolean rtnFlag =  DateUtil.isPast(year, month, day,
                         datepicker.getYear(), datepicker.getMonth(), datepicker.getDayOfMonth());
 
                 if (rtnFlag) {
