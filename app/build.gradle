@@ -52,6 +52,8 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+
+    compile files('libs/h2-1.4.191.jar')
 }
 
 crashlytics {
