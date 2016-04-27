@@ -54,6 +54,7 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
 
     compile files('libs/h2-1.4.191.jar')
+    compile files('libs/dbunit-2.4.9.jar')
 }
 
 crashlytics {
