@@ -19,6 +19,12 @@ public class H2DatabaseServer extends ExternalResource{
     private final String schemaName;
     private Server server = null;
 
+    /**
+     * 引数付のコンストラクタ
+     * @param baseDir     第一引数 DBファイルが保存されてるディレクトリのパス
+     * @param dbName      第二引数 DB名
+     * @param schemaName 第三引数 スキーマ名
+     */
     public H2DatabaseServer(String baseDir, String dbName, String schemaName){
         this.baseDir = baseDir;
         this.dbName = dbName;
@@ -28,15 +34,14 @@ public class H2DatabaseServer extends ExternalResource{
     @Override
     protected void before() throws Throwable {
         // DBサーバ起動
-        server = Server.createPgServer("-baseDir", baseDir);
+        server = Server.createTcpServer("-baseDir", baseDir);
         server.start();
         // スキーマ設定
         Properties props = new Properties();
         props.setProperty("user", "paparoach");
         props.setProperty("password", "paparoach");
-//        String url = "jdbc:h2:" + server.getURL() + "/" + dbName;
-        // 直接指定
-        String url = "jdbc:h2:C:\\Users\\Takahiro\\Documents\\h2dataBaseTest/" + dbName;
+        String url = "jdbc:h2:" + server.getURL() + "/" + dbName;
+//        String url = "jdbc:h2:C:\\Users\\Takahiro\\Documents\\h2dataBaseTest/" + dbName; // 直接指定した場合
         Connection conn = org.h2.Driver.load().connect(url, props);
         try {
             conn.createStatement()

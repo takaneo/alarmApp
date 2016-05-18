@@ -21,7 +21,9 @@ import static org.junit.Assert.*;
 @RunWith(Theories.class)
 public class DateUtilTest {
     @Rule
-    public H2DatabaseServer server = new H2DatabaseServer("", "sample", "sc");
+    public H2DatabaseServer server =
+            new H2DatabaseServer("C:\\\\Users\\\\Takahiro\\\\Documents\\\\h2dataBaseTest", "sample", "sc");
+
     @Before
     public void setUp() throws Exception {}
     @After
