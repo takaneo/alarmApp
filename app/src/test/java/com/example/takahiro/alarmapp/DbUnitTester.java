@@ -10,69 +10,57 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.ext.h2.H2DataTypeFactory;
+import org.h2.Driver;
+import org.h2.util.JdbcUtils;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
  * Created by Takahiro on 2016/04/25.
  */
 public abstract class DbUnitTester extends AbstractDatabaseTester implements TestRule{
-    //このクラスはabstractクラス
-    //Dbunitのテストを実行するためAbstractDatabaseTester継承
-    //Junit4のフォーマットを適応するためTestRuleインタフェース実装
 
-    private final String connectionUrl;
-    private final String username;
-    private final String password;
-
-    // 引数付コンストラクタ_1
-    public DbUnitTester(String driverClass, String connectionUrl){
-        this(driverClass, connectionUrl, null, null);
-    }
-    // 引数付コンストラクタ_2
-    public DbUnitTester(String driverClass, String connectionUrl, String username, String password){
-        this(driverClass, connectionUrl, username, password, null);
-    }
-    // 引数付コンストラクタ_3
-    public DbUnitTester(String driverClass, String connectionUrl, String username, String password, String schema){
-        super(schema);
-        this.connectionUrl = connectionUrl;
-        this.username = username;
-        this.password = password;
-        assertNotNullNorEmpty("driverClass", driverClass);
-        try{
-            //JDBCドライバロード
-            Class.forName(driverClass);
-        } catch (ClassNotFoundException e){
-            throw  new AssertionError();
-        }
-    }
-    
     @Override
     public IDatabaseConnection getConnection() throws Exception{
-        // コネクション取得
-        Connection conn = null;
-        if(username == null && password == null){
-            conn = DriverManager.getConnection(connectionUrl);
-        }else{
-            conn = DriverManager.getConnection(connectionUrl, username, password);
-        }
-        DatabaseConnection dbConnection = new DatabaseConnection(conn, getSchema());
+        Driver.load();
+        Connection conn = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"); // DB_CLOSE_DELAYオプション付き
+        DatabaseConnection dbConnection = new DatabaseConnection(conn);
         DatabaseConfig config = dbConnection.getConfig();
         config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
+
+        // スキーマ作成
+        try {
+            conn.createStatement().execute("CREATE SCHEMA IF NOT EXISTS " + "test");
+        } finally {                                                             //スキーマ名
+            JdbcUtils.closeSilently(conn);
+        }
         return  dbConnection;
     }
 
     protected void executeQuery(String sql) throws Exception{
-        //SQL実行メソッド
+        // インメモリDBの動作確認 (テストコードなのであとで消す)------------------------------------------------------
+        Connection conn = getConnection().getConnection(); //getConn2回必要
+        Statement st1 = conn.createStatement();
+        st1.execute("create table test (id int primary key, name varchar)");
+        st1.execute("insert into test values (1, 'hoge')");
+        ResultSet rs1 = st1.executeQuery("select * from test");
+        if(rs1.next()){
+            System.out.println("DB_インメモリ起動確認");
+        }
+        st1.close();  // ステートメントをクローズ
+        conn.close(); // コネクションをクローズ
+        //------------------------------------------------------------------------------------------------------------
+/*        //SQL実行メソッド
         Connection conn = getConnection().getConnection(); //2回いらないかも
         conn.createStatement().executeQuery(sql);
         conn.commit();
-        conn.close();
+        conn.close();*/
     }
 
     protected void before() throws Exception{
